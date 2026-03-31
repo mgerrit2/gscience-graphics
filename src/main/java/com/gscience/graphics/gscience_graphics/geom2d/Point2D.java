@@ -8,6 +8,10 @@ public class Point2D {
 
     private double x, y;
     public Point2D(double x, double y) { this.x = x; this.y = y; }
+    public Point2D(Point2D p) {
+        this.x = p.getX();
+        this.y= p.getY();
+    }
     public Point2D() { this(0, 0); }
 
     /**

@@ -1,6 +1,7 @@
 package com.gscience.graphics.gscience_graphics.geom2d;
 
 import com.gscience.graphics.gscience_graphics.geom2d.enumerate.GeomConstants;
+import com.gscience.graphics.gscience_graphics.geom2d.exception.LineLineException;
 
 public class Points2D {
 
@@ -17,6 +18,40 @@ public class Points2D {
         double midY = (p1.getY() + p2.getY()) / 2.0;
 
         return new Point2D(midX, midY);
+    }
+
+    /**
+     * Finds the intersection point of two lines defined by two pairs of points (P1-P2 and P3-P4).
+     * * <p>This method converts the point pairs into {@link Line2D} objects using the vector
+     * direction (P2 - P1) and (P4 - P3), then solves for the intersection using Cramer's Rule via
+     * {@link #pointLL2d(Line2D, Line2D)}.</p>
+     * * <p>Note: While the Pascal original (Point_EE_2d) often includes range checking to see if
+     * the intersection lies strictly within the segments, this implementation currently returns
+     * the intersection of the infinite lines passing through those points.</p>
+     *
+     * @param p1 The start point of the first segment.
+     * @param p2 The end point of the first segment.
+     * @param p3 The start point of the second segment.
+     * @param p4 The end point of the second segment.
+     * @return   A {@link Point2D} representing the intersection of the two lines.
+     * @throws LineLineException If the segments are parallel (det < EPS6), as no unique
+     * intersection exists.
+     * @see Points2D#linePP2d(Point2D, Point2D)
+     * @see #pointLL2d(Line2D, Line2D)
+     */
+    public static Point2D pointEE2d(Point2D p1, Point2D p2, Point2D p3, Point2D p4) throws LineLineException {
+        Line2D l1 = Points2D.linePP2d(p1, p2);
+        Line2D l2 = Points2D.linePP2d(p3, p4);
+
+        try {
+            // Find intersection of the infinite lines
+            Point2D p = Lines2D.pointLL2d(l1, l2);
+            return p;
+        } catch (LineLineException e) {
+            // If pointLL2d failed (Parallel lines), Pascal logic suggests
+            // further checks, though usually parallel segments don't intersect.
+            throw e;
+        }
     }
 
 
@@ -79,6 +114,27 @@ public class Points2D {
         return new Point2D(x, y);
     }
 
+    /**
+     * Creates a {@link Line2D} defined by two points, P1 and P2.
+     * * <p>This method calculates the direction vector (a, b) as the difference
+     * between the coordinates of P2 and P1, and sets P1 as the base anchor point (x, y).</p>
+     * * <p>The resulting line can be represented parametrically as:
+     * <br>L(t) = (p1.x + t * a, p1.y + t * b)</p>
+     *
+     * @param p1 The starting or "base" point of the line.
+     * @param p2 A second point used to determine the direction of the line.
+     * @return   A new {@link Line2D} instance with vector components (a, b)
+     * and base coordinates (x, y).
+     * @throws NullPointerException if p1 or p2 is null.
+     */
+    public static Line2D linePP2d(Point2D p1, Point2D p2) {
+        // Direction vector (a, b) = P2 - P1
+        double a = p2.getX() - p1.getX();
+        double b = p2.getY() - p1.getY();
+        // Base point is p1
+        return new Line2D(a, b, p1.getX(), p1.getY());
+    }
+
 
     //region  Point in Polygon
     /**
@@ -113,5 +169,52 @@ public class Points2D {
         return w >= 0;
     }
     //endregion
+
+    /**
+     * Calculates the Y coordinate on a line given an X coordinate.
+     * Uses the point-slope form: y = m(x - x1) + y1, where m = b/a.
+     *
+     * @param l
+     * @param p
+     * @return
+     * @See Grafische toepassingen in turbo pascal blz 22
+     */
+    public static Point2D pointLX2d(Line2D l, Point2D p) {
+        // Guard Clause: Prevent division by zero for vertical lines
+        if (Math.abs(l.getA()) < GeomConstants.EPS6) {
+            throw new ArithmeticException("Division by zero: Line 'a' component is too small (Vertical Line).");
+        }
+
+        // Calculate slope m = rise/run
+        double slope = l.getB() / l.getA();
+
+        // Calculate new Y
+        double newY = slope * (p.getX() - l.getX()) + l.getY();
+
+        // Update the existing point
+        p.setY(newY);
+
+        // Return the updated point (allows for method chaining)
+        return p;
+    }
+
+
+    /**
+     * Calculates the X-coordinate of a point on the line given its Y-coordinate.
+     * * @param l The 2D line definition containing components a, b and anchor point (x, y).
+     * @param p The point containing the target Y-coordinate; its X-coordinate will be updated.
+     * @return The updated Point2D object for method chaining.
+     * @throws ArithmeticException if the line's 'b' component is near zero (vertical line).
+     * @See Grafische toepassingen in turbo pascal blz 23
+     */
+    public static Point2D pointLY2d(Line2D l, Point2D p) {
+        if (Math.abs(l.getB()) < GeomConstants.EPS6) {
+            throw new ArithmeticException("Division by zero: Line 'a' component is too small (Vertical Line).");
+        } else {
+            // Calculation: P.x = (L.a / L.b) * (P.y - L.y) + L.x
+            p.setX((l.getA() / l.getB()) * (p.getY() - l.getY()) + l.getX());
+            return p;
+        }
+    }
 
 }
