@@ -10,7 +10,7 @@ description = 'Test and creating 2d an 3d graphics'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
