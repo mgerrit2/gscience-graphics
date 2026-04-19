@@ -9,29 +9,36 @@ public class Lines2D {
 
     /**
      * Finds the intersection point of two 2D lines using Cramer's Rule.
-     * * <p>The lines are assumed to be in the general form: Ax + By + C = 0.
-     * This method solves the system of linear equations by calculating the
-     * determinant of the coefficient matrix.</p>
+     * <p>The lines are assumed to be in parametric form: P = P0 + tV,
+     * where P0 is an anchor point and V is a direction vector.</p>
      *
-     * @param l1 The first line for intersection.
-     * @param l2 The second line for intersection.
-     * @return A {@link Point2D} representing the unique point where the lines cross.
-     * @throws LineLineException If the determinant is near zero, indicating the
-     * lines are parallel or collinear and do not have a unique intersection.
+     * @param l1 The first line (Point P1, Vector V1).
+     * @param l2 The second line (Point P2, Vector V2).
+     * @return A {@link Point2D} representing the intersection.
+     * @throws LineLineException If the lines are parallel (determinant of vectors is 0).
      */
-    public static Point2D pointLL2d(Line2D l1, Line2D l2) throws LineLineException {
-        double det = l1.getA() * l2.getB() - l2.getA() * l1.getB();
+    public static Point2D pointLL(Line2D l1, Line2D l2) throws LineLineException {
+        // Pascal: Det := L1.a * L2.b - L2.a * L1.b;
+        double det = l1.getV().getX() * l2.getV().getY() - l2.getV().getX() * l1.getV().getY();
+
         if (Math.abs(det) < GeomConstants.EPS6) {
-            throw new LineLineException("Parallel lines",ErrorCode.PARALLEL_LINES);
+            throw new LineLineException("Parallel lines", ErrorCode.PARALLEL_LINES);
         } else {
-            double det1 = l1.getA() * l1.getY() - l1.getB() * l1.getX();
-            double det2 = l2.getA() * l2.getY() - l2.getB() * l2.getX();
-            double detX = -l1.getA() * det2 + l2.getA() * det1;
-            double detY = l2.getB() * det1 - l1.getB() * det2;
+            // Pascal: Det1 := L1.a * L1.y - L1.b * L1.x;
+            double det1 = l1.getV().getX() * l1.getP().getY() - l1.getV().getY() * l1.getP().getX();
+
+            // Pascal: Det2 := L2.a * L2.y - L2.b * L2.x;
+            double det2 = l2.getV().getX() * l2.getP().getY() - l2.getV().getY() * l2.getP().getX();
+
+            // Pascal: DetX := -L1.a * Det2 + L2.a * Det1;
+            double detX = -l1.getV().getX() * det2 + l2.getV().getX() * det1;
+
+            // Pascal: DetY := L2.b * Det1 - l1.b * Det2;
+            double detY = l2.getV().getY() * det1 - l1.getV().getY() * det2;
+
             return new Point2D(detX / det, detY / det);
         }
     }
-
 
 
 }

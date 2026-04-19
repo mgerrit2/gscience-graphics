@@ -21,7 +21,7 @@ public class PointEE2DTest {
             Point2D p3 = new Point2D(0, 10);
             Point2D p4 = new Point2D(10, 0);
 
-            Point2D result = Points2D.pointEE2d(p1, p2, p3, p4);
+            Point2D result = Points2D.pointEE(p1, p2, p3, p4);
 
             assertEquals(5.0, result.getX(), 1e-9);
             assertEquals(5.0, result.getY(), 1e-9);
@@ -37,7 +37,7 @@ public class PointEE2DTest {
             Point2D p3 = new Point2D(2, 2); // Intersection point
             Point2D p4 = new Point2D(4, 0);
 
-            Point2D result = Points2D.pointEE2d(p1, p2, p3, p4);
+            Point2D result = Points2D.pointEE(p1, p2, p3, p4);
 
             assertEquals(2.0, result.getX(), 1e-9);
             assertEquals(2.0, result.getY(), 1e-9);
@@ -55,7 +55,7 @@ public class PointEE2DTest {
             Point2D p4 = new Point2D(5, 2);
 
             // These don't "touch", but the infinite lines intersect at (5,0)
-            Point2D result = Points2D.pointEE2d(p1, p2, p3, p4);
+            Point2D result = Points2D.pointEE(p1, p2, p3, p4);
 
             assertEquals(5.0, result.getX(), 1e-9);
             assertEquals(0.0, result.getY(), 1e-9);
@@ -72,7 +72,7 @@ public class PointEE2DTest {
             Point2D p4 = new Point2D(5, 2);
 
             LineLineException ex = assertThrows(LineLineException.class, () -> {
-                Points2D.pointEE2d(p1, p2, p3, p4);
+                Points2D.pointEE(p1, p2, p3, p4);
             });
 
             assertEquals(ErrorCode.PARALLEL_LINES, ex.getErrorCode());

@@ -10,7 +10,7 @@ public class Vects2D{
      * @param v2 De rechter vector (aftrekker).
      * @param v  De doelvector die het verschil bevat.
      */
-    public static Vect2D vectSub2d(Vect2D v1, Vect2D v2) {
+    public static Vect2D vectSub(Vect2D v1, Vect2D v2) {
 
         Vect2D v = new Vect2D();
 
@@ -20,25 +20,7 @@ public class Vects2D{
         return v;
     }
 
-    /**
-     * Calculates the perpendicular (normal) vector of V and stores it in N.
-     * This rotates the vector 90 degrees counter-clockwise.
-     * * @param v The original vector.
-     * @param n The vector object that will be updated with the normal coordinates.
-     */
-    public static Vect2D vectN2d(Vect2D v) {
 
-        Vect2D n = new Vect2D();
-
-        // Standard 2D perpendicular rotation: (-y, x)
-        double tempX = -v.getY();
-        double tempY = v.getX();
-
-        n.setX(tempX);
-        n.setY(tempY);
-
-        return n;
-    }
 
     /**
      * Berekent de eenheidsvector (Unit Vector) van V1 en slaat het resultaat op in V.
@@ -46,7 +28,7 @@ public class Vects2D{
      * * @param v1 De bronvector die genormaliseerd moet worden.
      * @param v  De doelvector waarin het resultaat wordt opgeslagen.
      */
-    public static void vectU2d(Vect2D v1, Vect2D v) {
+    public static void vectU(Vect2D v1, Vect2D v) {
         double len = v1.getLength();
 
         // Controleer op een lengte nabij nul om "Division by Zero" te voorkomen
@@ -65,7 +47,7 @@ public class Vects2D{
      * @param v2 De tweede vector.
      * @return Het scalaire resultaat (v1.x * v2.x + v1.y * v2.y).
      */
-    public static double vectProdS2d(Vect2D v1, Vect2D v2) {
+    public static double vectProd(Vect2D v1, Vect2D v2) {
         return v1.getX() * v2.getX() + v1.getY() * v2.getY();
     }
 
@@ -75,7 +57,7 @@ public class Vects2D{
      * @param r  De schaalfactor (double).
      * @param v  De doelvector die het geschaalde resultaat bevat.
      */
-    public static Vect2D vectMultS2d(Vect2D v1, double r) {
+    public static Vect2D vectMult(Vect2D v1, double r) {
 
         Vect2D v = new Vect2D();
 
@@ -84,5 +66,6 @@ public class Vects2D{
 
         return v;
     }
+
 
 }

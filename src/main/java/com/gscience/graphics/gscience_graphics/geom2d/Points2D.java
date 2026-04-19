@@ -36,17 +36,16 @@ public class Points2D {
      * @return   A {@link Point2D} representing the intersection of the two lines.
      * @throws LineLineException If the segments are parallel (det < EPS6), as no unique
      * intersection exists.
-     * @see Points2D#linePP2d(Point2D, Point2D)
-     * @see #pointLL2d(Line2D, Line2D)
+     * @see Points2D#linePP(Point2D, Point2D)
+     * @see #pointLL(Line2D, Line2D)
      */
-    public static Point2D pointEE2d(Point2D p1, Point2D p2, Point2D p3, Point2D p4) throws LineLineException {
-        Line2D l1 = Points2D.linePP2d(p1, p2);
-        Line2D l2 = Points2D.linePP2d(p3, p4);
+    public static Point2D pointEE(Point2D p1, Point2D p2, Point2D p3, Point2D p4) throws LineLineException {
+        Line2D l1 = Points2D.linePP(p1, p2);
+        Line2D l2 = Points2D.linePP(p3, p4);
 
         try {
             // Find intersection of the infinite lines
-            Point2D p = Lines2D.pointLL2d(l1, l2);
-            return p;
+            return Lines2D.pointLL(l1, l2);
         } catch (LineLineException e) {
             // If pointLL2d failed (Parallel lines), Pascal logic suggests
             // further checks, though usually parallel segments don't intersect.
@@ -71,7 +70,7 @@ public class Points2D {
      * @throws IllegalArgumentException if the sum of a1 and a2 is zero (or within epsilon),
      * as this would result in a division by zero (point at infinity).
      */
-    public static Point2D sect2d(Point2D p1, Point2D p2, double a1, double a2) {
+    public static Point2D sect(Point2D p1, Point2D p2, double a1, double a2) {
         double divisor = a1 + a2;
 
         // Check for division by zero (parallel to Pascal's Eps6 check)
@@ -94,7 +93,7 @@ public class Points2D {
      * @param cosh
      * @return
      */
-    public Point2D rotC2d(Point2D p0, Point2D c, double sinh, double cosh) {
+    public Point2D rotC(Point2D p0, Point2D c, double sinh, double cosh) {
         double x = p0.getX() * cosh - p0.getY() * sinh - c.getX() * cosh + c.getY() * sinh + c.getX();
         double y = p0.getX() * sinh + p0.getY() * cosh - c.getX() * sinh - c.getY() * cosh + c.getY();
         return new Point2D(x, y);
@@ -127,7 +126,7 @@ public class Points2D {
      * and base coordinates (x, y).
      * @throws NullPointerException if p1 or p2 is null.
      */
-    public static Line2D linePP2d(Point2D p1, Point2D p2) {
+    public static Line2D linePP(Point2D p1, Point2D p2) {
         // Direction vector (a, b) = P2 - P1
         double a = p2.getX() - p1.getX();
         double b = p2.getY() - p1.getY();
@@ -179,23 +178,28 @@ public class Points2D {
      * @return
      * @See Grafische toepassingen in turbo pascal blz 22
      */
-    public static Point2D pointLX2d(Line2D l, Point2D p) {
+    public static Point2D pointLX2d(Line2D l, Point2D target) {
+        // In Pascal: L.a is the X-component of the vector (l.getV().getX())
+        // In Pascal: L.b is the Y-component of the vector (l.getV().getY())
+        double vx = l.getV().getX();
+        double vy = l.getV().getY();
+
         // Guard Clause: Prevent division by zero for vertical lines
-        if (Math.abs(l.getA()) < GeomConstants.EPS6) {
-            throw new ArithmeticException("Division by zero: Line 'a' component is too small (Vertical Line).");
+        if (Math.abs(vx) < GeomConstants.EPS6) {
+            // In Pascal, Err_2d was set to 0. In Java, throwing an exception is safer.
+            throw new ArithmeticException("Line is vertical; cannot calculate Y for a given X.");
         }
 
-        // Calculate slope m = rise/run
-        double slope = l.getB() / l.getA();
+        // Calculate slope m = dy/dx
+        double slope = vy / vx;
 
-        // Calculate new Y
-        double newY = slope * (p.getX() - l.getX()) + l.getY();
+        // Line Equation: y - y0 = m(x - x0)  =>  y = m(x - x0) + y0
+        // L.x and L.y in Pascal are the coordinates of the anchor point on the line
+        double newY = slope * (target.getX() - l.getP().getX()) + l.getP().getY();
 
-        // Update the existing point
-        p.setY(newY);
+        target.setY(newY);
 
-        // Return the updated point (allows for method chaining)
-        return p;
+        return target;
     }
 
 
@@ -208,13 +212,39 @@ public class Points2D {
      * @See Grafische toepassingen in turbo pascal blz 23
      */
     public static Point2D pointLY2d(Line2D l, Point2D p) {
-        if (Math.abs(l.getB()) < GeomConstants.EPS6) {
-            throw new ArithmeticException("Division by zero: Line 'a' component is too small (Vertical Line).");
-        } else {
-            // Calculation: P.x = (L.a / L.b) * (P.y - L.y) + L.x
-            p.setX((l.getA() / l.getB()) * (p.getY() - l.getY()) + l.getX());
-            return p;
+        // In Pascal logic, L.b is the Y-component of the direction vector
+        double vy = l.getV().getY();
+        double vx = l.getV().getX();
+
+        if (Math.abs(vy) < GeomConstants.EPS6) {
+            // If vy is 0, the line is horizontal. You cannot find a unique X for a given Y
+            // unless the given Y is exactly the line's Y, in which case X is infinite.
+            throw new ArithmeticException("Division by zero: Line is horizontal (vector 'b' is 0).");
         }
+
+        // Formula: x = (dx/dy) * (p.y - y0) + x0
+        double x0 = l.getP().getX();
+        double y0 = l.getP().getY();
+
+        double newX = (vx / vy) * (p.getY() - y0) + x0;
+
+        p.setX(newX);
+        return p;
+    }
+
+
+    /**
+     * Checks if point P is inside the rectangle defined by P1 and P2.
+     * This implementation handles P1 and P2 regardless of their relative order.
+     */
+    public static boolean inRecG2d(Point2D p1, Point2D p2, Point2D p) {
+        // Check if x is between p1.x and p2.x
+        boolean xMatch = (p1.getX() <= p.getX()) == (p.getX() <= p2.getX());
+
+        // Check if y is between p1.y and p2.y
+        boolean yMatch = (p1.getY() <= p.getY()) == (p.getY() <= p2.getY());
+
+        return xMatch && yMatch;
     }
 
 }

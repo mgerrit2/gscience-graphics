@@ -79,7 +79,7 @@ class Point2DTest {
 
         System.out.println("the text of the point"+ p1.toString());
 
-        assertEquals("Point2D(x=0.0, y=0.0)",p1.toString());
+        assertEquals("[x,y]= 0.000000, 0.000000",p1.toString());
     }
 
 

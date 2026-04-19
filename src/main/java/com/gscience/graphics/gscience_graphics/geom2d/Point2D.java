@@ -48,4 +48,11 @@ public class Point2D {
         return new PolarPoint(r, ph);
     }
 
+    @Override
+    public String toString() {
+        // String.format uses (total width).(precision)
+        // %9.6f matches your Pascal P.x:9:6
+        return String.format("[x,y]=%9.6f,%9.6f", x, y);
+    }
+
 }

@@ -40,6 +40,27 @@ public class Vect2D extends Point2D {
     public Vect2D plus(Vect2D other) {
         return new Vect2D(this.getX() + other.getX(), this.getY() + other.getY());
     }
+
+    /**
+     * Calculates the perpendicular (normal) vector of V and stores it in N.
+     * This rotates the vector 90 degrees counter-clockwise.
+     * * @param v The original vector.
+     * @param n The vector object that will be updated with the normal coordinates.
+     */
+    public static Vect2D vectN(Vect2D v) {
+
+        Vect2D n = new Vect2D();
+
+        // Standard 2D perpendicular rotation: (-y, x)
+        double tempX = -v.getY();
+        double tempY = v.getX();
+
+        n.setX(tempX);
+        n.setY(tempY);
+
+        return n;
+    }
+
 }
 
 
