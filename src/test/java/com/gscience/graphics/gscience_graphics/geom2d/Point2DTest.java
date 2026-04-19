@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Point2DTest {
+class Point2DTest {
 
     private static final double THRESHOLD = 1e-10;
     private static final double DELTA = 1e-10; // Precisie voor floating point vergelijkingen
@@ -71,6 +71,15 @@ public class Point2DTest {
 
         assertEquals(2.5, resultAsym.getX(), DELTA); // (1+4)/2
         assertEquals(4.0, resultAsym.getY(), DELTA); // (2+6)/2
+    }
+
+    @Test
+    void showPoint(){
+        Point2D p1 = new Point2D(0.0, 0.0);
+
+        System.out.println("the text of the point"+ p1.toString());
+
+        assertEquals("Point2D(x=0.0, y=0.0)",p1.toString());
     }
 
 

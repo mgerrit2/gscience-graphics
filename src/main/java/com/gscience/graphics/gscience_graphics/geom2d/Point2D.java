@@ -1,12 +1,13 @@
 package com.gscience.graphics.gscience_graphics.geom2d;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class Point2D {
 
-    private double x, y;
+    private double x;
+    private double y;
+
     public Point2D(double x, double y) { this.x = x; this.y = y; }
     public Point2D(Point2D p) {
         this.x = p.getX();
