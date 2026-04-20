@@ -247,4 +247,17 @@ public class Points2D {
         return xMatch && yMatch;
     }
 
+    /**
+     * Calculates the Euclidean distance between two 2D points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the straight-line distance between p1 and p2
+     */
+    public static double distPP(Point2D p1, Point2D p2) {
+        double dx = p1.getX() - p2.getX();
+        double dy = p1.getY() - p2.getY();
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
 }

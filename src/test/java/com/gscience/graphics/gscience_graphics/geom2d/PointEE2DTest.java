@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class PointEE2DTest {
+class PointEE2DTest {
 
         @Test
         @DisplayName("Should find intersection of two segments crossing at (5,5)")

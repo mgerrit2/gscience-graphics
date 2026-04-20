@@ -2,6 +2,7 @@ package com.gscience.graphics.gscience_graphics.geom2d;
 
 import lombok.Data;
 
+
 @Data
 public class Line2D {
 
@@ -34,19 +35,10 @@ public class Line2D {
 
     @Override
     public String toString() {
-        return String.format(".v[a,b]= %9.6f,%9.6f\n.p[x,y]= %9.6f,%9.6f",
+        return String.format(java.util.Locale.US,
+                "Line2D[v(a,b)=%9.6f,%9.6f | p(x,y)=%9.6f,%9.6f]",
                 v.getX(), v.getY(), p.getX(), p.getY());
     }
-
-    // Pascal variant record represented by providing all fields
-    /*
-    private double a, b; // Vector components
-    private double x, y; // Base point coordinates
-
-    public Line2D(double a, double b, double x, double y) {
-        this.a = a; this.b = b; this.x = x; this.y = y;
-    }
-*/
 
 
 }

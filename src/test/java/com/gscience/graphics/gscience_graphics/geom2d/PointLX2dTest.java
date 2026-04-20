@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PointLX2dTest {
+class PointLX2dTest {
 
     @Test
     @DisplayName("Should calculate correct Y for a 45-degree diagonal line")
@@ -16,7 +16,7 @@ public class PointLX2dTest {
         // We want to find Y at X = 10
         Point2D point = new Point2D(1.5, 0.0);
 
-        var result = Points2D.pointLX2d(line, point);
+        Points2D.pointLX2d(line, point);
 
         // Expected Y: 1 * (10 - 2) + 3 = 11
         assertEquals(2.5, point.getY(), GeomConstants.EPS6);
